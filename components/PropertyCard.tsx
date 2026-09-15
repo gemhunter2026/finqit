@@ -9,17 +9,26 @@ import { AreaIcon, BedIcon, HeartIcon, MapPinIcon, SparklesIcon } from "@/compon
 
 export function PropertyCard({ property }: { property: Property }) {
   const [saved, setSaved] = useState(false);
+  const [imageIndex, setImageIndex] = useState(0);
+
+  const move = (direction: number) => {
+    setImageIndex((current) => (current + direction + property.images.length) % property.images.length);
+  };
+
   return (
     <article className="property-card">
       <div className="property-card-image-wrap">
         <Link href={`/property/${property.slug}`} aria-label={`View ${property.title}`}>
-          <Image className="property-card-image" src={property.image} alt={property.title} width={720} height={520} sizes="(max-width: 720px) 100vw, (max-width: 1100px) 50vw, 33vw" />
+          <Image className="property-card-image" src={property.images[imageIndex]} alt={property.title} width={720} height={580} sizes="(max-width: 720px) 100vw, (max-width: 1100px) 50vw, 33vw" />
         </Link>
         <div className="property-badges">
           {property.instantReserve && <span className="pill pill-white"><span className="status-dot" /> Instant Reserve</span>}
           {property.match >= 90 && <span className="pill pill-blue"><SparklesIcon size={15}/> {property.match}% match</span>}
         </div>
-        <button className={`save-button ${saved ? "saved" : ""}`} onClick={() => setSaved(!saved)} aria-label={saved ? "Remove from saved" : "Save property"}>
+        <button type="button" className="property-gallery-arrow left" onClick={() => move(-1)} aria-label="Previous photo">‹</button>
+        <button type="button" className="property-gallery-arrow right" onClick={() => move(1)} aria-label="Next photo">›</button>
+        <div className="property-card-dots" aria-hidden="true">{property.images.map((_, index) => <span key={index} className={index === imageIndex ? "active" : ""}/>)}</div>
+        <button type="button" className={`save-button ${saved ? "saved" : ""}`} onClick={() => setSaved(!saved)} aria-label={saved ? "Remove from saved" : "Save property"}>
           <HeartIcon size={20} fill={saved ? "currentColor" : "none"} />
         </button>
       </div>
