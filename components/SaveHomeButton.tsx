@@ -23,7 +23,7 @@ export function SaveHomeButton({ slug, compact = false }: { slug: string; compac
     setSaved(next.includes(slug));
   };
 
-  return <button type="button" className={compact ? `save-button ${saved ? "saved" : ""}` : `gallery-save ${saved ? "saved" : ""}`} onClick={toggle} aria-pressed={saved}>
+  return <button type="button" className={compact ? `save-button ${saved ? "saved" : ""}` : `gallery-save ${saved ? "saved" : ""}`} onClick={toggle} aria-pressed={saved} aria-label={saved ? "Remove home from saved" : "Save home"}>
     <HeartIcon size={20} fill={saved ? "currentColor" : "none"}/>{compact ? null : <span>{saved ? "Saved" : "Save"}</span>}
   </button>;
 }
