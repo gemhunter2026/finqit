@@ -7,25 +7,34 @@ import { FINQIT_STATE_EVENT, getActiveReservation, getAgentConfig, saveAgentConf
 const chips = ["South-facing", "3+ bedrooms", "Terrace", "Lift", "Parking"];
 
 export function AgentBuilder({ compact = false }: { compact?: boolean }) {
-  const initial = getAgentConfig();
-  const [active, setActive] = useState(initial.active);
-  const [location, setLocation] = useState(initial.location);
-  const [radiusKm, setRadiusKm] = useState(initial.radiusKm);
-  const [maxPrice, setMaxPrice] = useState(initial.maxPrice);
-  const [reservationLimit, setReservationLimit] = useState(initial.reservationLimit);
-  const [selected, setSelected] = useState<string[]>(initial.hardRules);
-  const [authorised, setAuthorised] = useState(initial.authorised);
+  const [active, setActive] = useState(false);
+  const [location, setLocation] = useState("Sabadell");
+  const [radiusKm, setRadiusKm] = useState(8);
+  const [maxPrice, setMaxPrice] = useState(350000);
+  const [reservationLimit, setReservationLimit] = useState(1200);
+  const [selected, setSelected] = useState<string[]>(["South-facing", "3+ bedrooms", "Terrace"]);
+  const [authorised, setAuthorised] = useState(false);
   const [reservationActive, setReservationActive] = useState(false);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    const sync = () => setReservationActive(Boolean(getActiveReservation()));
-    sync();
-    window.addEventListener(FINQIT_STATE_EVENT, sync);
-    window.addEventListener("storage", sync);
+    const hydrate = () => {
+      const config = getAgentConfig();
+      setActive(config.active);
+      setLocation(config.location);
+      setRadiusKm(config.radiusKm);
+      setMaxPrice(config.maxPrice);
+      setReservationLimit(config.reservationLimit);
+      setSelected(config.hardRules);
+      setAuthorised(config.authorised);
+      setReservationActive(Boolean(getActiveReservation()));
+    };
+    hydrate();
+    window.addEventListener(FINQIT_STATE_EVENT, hydrate);
+    window.addEventListener("storage", hydrate);
     return () => {
-      window.removeEventListener(FINQIT_STATE_EVENT, sync);
-      window.removeEventListener("storage", sync);
+      window.removeEventListener(FINQIT_STATE_EVENT, hydrate);
+      window.removeEventListener("storage", hydrate);
     };
   }, []);
 
