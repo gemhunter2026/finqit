@@ -1,134 +1,88 @@
-import Image from "next/image";
 import Link from "next/link";
-import { AgentBuilder } from "@/components/AgentBuilder";
+import { MarketplaceHero } from "@/components/MarketplaceHero";
 import { PropertyCard } from "@/components/PropertyCard";
 import { properties } from "@/data/properties";
-import { ArrowRightIcon, BuildingIcon, CheckIcon, FileIcon, MailIcon, SearchIcon, ShieldIcon, SparklesIcon, UsersIcon, VoteIcon, WalletIcon } from "@/components/icons";
+import { ArrowRightIcon, CheckIcon, MailIcon, ShieldIcon, SparklesIcon, UsersIcon } from "@/components/icons";
+
+const categories = ["Instant Reserve", "Under €350k", "3+ bedrooms", "Terrace", "South-facing", "New today"];
 
 export default function Home() {
   return (
     <>
-      <section className="hero page-shell">
-        <div className="hero-copy">
-          <div className="eyebrow"><SparklesIcon size={16}/> A fairer way to get home</div>
-          <h1>Find it. <span>Secure it.</span><br/>See it before it&apos;s gone.</h1>
-          <p className="hero-subtitle">Finqit turns home search into a transaction you can actually control — with verified listings, instant reservations and smart agents that can act for you.</p>
-          <form className="hero-search" action="/explore">
-            <SearchIcon size={22}/>
-            <div><span>Where do you want to live?</span><strong>Sabadell, Barcelona...</strong></div>
-            <button type="submit" aria-label="Search"><ArrowRightIcon size={21}/></button>
-          </form>
-          <div className="hero-actions-row">
-            <Link className="button button-primary" href="/explore">Explore homes <ArrowRightIcon size={17}/></Link>
-            <Link className="button button-secondary" href="/agent"><SparklesIcon size={17}/> Create your agent</Link>
-          </div>
-          <div className="trust-row">
-            <span><CheckIcon size={15}/> Verified listings</span>
-            <span><CheckIcon size={15}/> Transparent reservation terms</span>
-            <span><CheckIcon size={15}/> Fair queue logic</span>
-          </div>
-        </div>
+      <MarketplaceHero />
 
-        <div className="hero-visual">
-          <div className="hero-photo-card">
-            <Image src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1600&q=88" alt="Bright modern apartment" fill priority sizes="(max-width: 900px) 100vw, 48vw" />
-            <div className="hero-photo-overlay" />
-            <div className="hero-property-top">
-              <span className="pill pill-white"><span className="status-dot"/> Instant Reserve</span>
-              <span className="pill pill-blue"><SparklesIcon size={15}/> 98% match</span>
-            </div>
-            <div className="hero-property-card glass-card">
-              <div><small>Eix Macià · Sabadell</small><strong>South-facing · 3 beds · terrace</strong></div>
-              <span>€329k</span>
-            </div>
-          </div>
-          <div className="floating-card queue-card">
-            <div className="queue-icon"><ShieldIcon size={20}/></div>
-            <div><small>Fair priority</small><strong>You&apos;re #1 for your next match</strong></div>
-          </div>
-          <div className="floating-card agent-mini-card">
-            <span className="agent-pulse active" />
-            <div><small>Your agent is watching</small><strong>23 new listings checked today</strong></div>
-          </div>
-        </div>
+      <section className="mkt-shell mkt-stats" aria-label="Finqit marketplace principles">
+        <div><strong>&lt;10 sec</strong><span>to secure an eligible home</span></div>
+        <div><strong>1 active</strong><span>reservation per buyer</span></div>
+        <div><strong>72 h</strong><span>typical exclusive visit window</span></div>
+        <div><strong>100%</strong><span>terms visible before payment</span></div>
       </section>
 
-      <section className="proof-strip">
-        <div className="page-shell proof-grid">
-          <div><strong>&lt; 10 sec</strong><span>to reserve an eligible match</span></div>
-          <div><strong>1 active</strong><span>reservation per buyer</span></div>
-          <div><strong>72 h</strong><span>typical exclusive visit window</span></div>
-          <div><strong>100%</strong><span>terms shown before you commit</span></div>
+      <section className="mkt-section mkt-shell">
+        <div className="mkt-section-head">
+          <div><div className="mkt-section-label">Explore homes</div><h2>Homes you can actually move on.</h2></div>
+          <Link href="/explore" className="inline-link">View all homes <ArrowRightIcon size={17}/></Link>
         </div>
-      </section>
-
-      <section className="section page-shell">
-        <div className="section-heading split-heading">
-          <div><div className="eyebrow">Fresh opportunities</div><h2>Homes you can actually secure.</h2></div>
-          <Link className="inline-link" href="/explore">See all homes <ArrowRightIcon size={17}/></Link>
+        <div className="mkt-category-row" aria-label="Popular filters">
+          {categories.map((item, index) => <Link key={item} href="/explore" className={`mkt-category ${index === 0 ? "active" : ""}`}>{item}</Link>)}
         </div>
-        <div className="property-grid home-property-grid">
+        <div className="property-grid" style={{marginTop:22}}>
           {properties.slice(0, 3).map((property) => <PropertyCard key={property.slug} property={property}/>) }
         </div>
       </section>
 
-      <section className="section page-shell two-pillars">
-        <div className="pillar-card marketplace-pillar">
-          <div className="pillar-icon"><BuildingIcon size={25}/></div>
-          <div className="eyebrow">For your next home</div>
-          <h2>Search less.<br/>Move first.</h2>
-          <p>Browse transaction-ready homes, reserve instantly, and let your smart agent watch for the exact property you want.</p>
-          <ul className="clean-list">
-            <li><CheckIcon/> Verified seller and listing data</li>
-            <li><CheckIcon/> Standardised reservation terms</li>
-            <li><CheckIcon/> One active reservation keeps access fair</li>
-          </ul>
-          <Link className="button button-primary" href="/explore">Explore marketplace <ArrowRightIcon/></Link>
-        </div>
-        <div className="pillar-card community-pillar">
-          <div className="pillar-icon"><UsersIcon size={25}/></div>
-          <div className="eyebrow">For where you already live</div>
-          <h2>Your community,<br/>finally organised.</h2>
-          <p>Every building gets an intelligent inbox. CC Finqit and decisions, invoices, minutes and requests become structured community knowledge.</p>
-          <div className="community-feature-grid">
-            <span><MailIcon/> Smart inbox</span>
-            <span><FileIcon/> Documents</span>
-            <span><WalletIcon/> Finances</span>
-            <span><VoteIcon/> Voting</span>
+      <section className="mkt-section" style={{background:"#f7fbff",borderBlock:"1px solid #eaf1f7"}}>
+        <div className="mkt-shell">
+          <div className="mkt-section-head">
+            <div><div className="mkt-section-label">How Instant Reserve works</div><h2>A fair queue, not a race to call.</h2></div>
+            <p>When a seller enables Instant Reserve, the listing comes with a pre-agreed short reservation structure. Eligible buyers can secure the next exclusive decision window under the same published rules.</p>
           </div>
-          <Link className="button button-dark" href="/community">Open community demo <ArrowRightIcon/></Link>
+          <div className="steps-grid">
+            <article><span>1</span><h3>Verified listing</h3><p>Seller authority, key property information and reservation conditions are prepared before the home is marked reservable.</p></article>
+            <article><span>2</span><h3>Reserve & lock</h3><p>You accept the displayed terms and pay through the future regulated payment flow. The property is locked for the agreed window.</p></article>
+            <article><span>3</span><h3>Visit & decide</h3><p>Proceed and the agreed amount can be credited toward the purchase, or decline under the stated premium/refund rules.</p></article>
+          </div>
         </div>
       </section>
 
-      <section className="section agent-home page-shell">
-        <div className="section-heading centered-heading">
-          <div className="eyebrow"><SparklesIcon size={16}/> Finqit Agent</div>
-          <h2>Your search can keep moving<br/>even when you can&apos;t.</h2>
-          <p>Automation is only allowed inside the rules you define. No black box bidding. No surprise spending.</p>
+      <section className="mkt-section mkt-shell">
+        <div className="mkt-section-head">
+          <div><div className="mkt-section-label">Finqit Agent</div><h2>Let your search stay awake.</h2></div>
+          <p>Your agent can monitor hard criteria and act only inside the price, location and reservation limits you explicitly authorise.</p>
         </div>
-        <AgentBuilder />
+        <div className="two-pillars">
+          <div className="pillar-card marketplace-pillar" style={{minHeight:430}}>
+            <div className="pillar-icon"><SparklesIcon size={24}/></div>
+            <div className="eyebrow">Buyer automation</div>
+            <h2>See the match.<br/>Not the noise.</h2>
+            <p>Set non-negotiables like city, maximum price, bedrooms, orientation and maximum reservation payment.</p>
+            <ul className="clean-list"><li><CheckIcon/> Hard filters only for auto-reserve</li><li><CheckIcon/> One active reservation at a time</li><li><CheckIcon/> Every automated action is logged</li></ul>
+            <Link className="button button-primary" href="/agent">Configure agent <ArrowRightIcon/></Link>
+          </div>
+          <div className="pillar-card" style={{minHeight:430,background:"white",border:"1px solid #e5edf5"}}>
+            <div className="pillar-icon"><ShieldIcon size={24}/></div>
+            <div className="eyebrow">For sellers & agencies</div>
+            <h2>Publish once.<br/>Handle demand fairly.</h2>
+            <p>Turn a listing into a transaction-ready opportunity with standard information, clear terms and controlled reservation windows.</p>
+            <ul className="clean-list"><li><CheckIcon/> Owner or agency mandate</li><li><CheckIcon/> Buyer queue and anti-abuse rules</li><li><CheckIcon/> Reservation-ready listing wizard</li></ul>
+            <Link className="button button-secondary" href="/list-property">List a property <ArrowRightIcon/></Link>
+          </div>
+        </div>
       </section>
 
-      <section className="section page-shell how-it-works">
-        <div className="section-heading centered-heading"><div className="eyebrow">Instant Reserve</div><h2>From listing to viewing in three clear steps.</h2></div>
-        <div className="steps-grid">
-          <article><span>1</span><h3>Match</h3><p>You or your agent find a verified home that fits your hard requirements.</p></article>
-          <article><span>2</span><h3>Reserve</h3><p>Accept transparent terms and secure an exclusive viewing window in seconds.</p></article>
-          <article><span>3</span><h3>Decide</h3><p>Visit the home. Continue and the agreed amount is credited, or decline under the stated refund rules.</p></article>
+      <section className="mkt-shell mkt-community-band">
+        <div>
+          <div className="eyebrow light"><UsersIcon size={15}/> The other side of Finqit</div>
+          <h2>Already own a home? Your community lives here too.</h2>
+          <p>The community workspace remains a separate Finqit product area: give each building an intelligent inbox for minutes, invoices, incidents, votes and shared knowledge.</p>
         </div>
+        <Link className="button button-white" href="/community"><MailIcon size={17}/> Open community demo</Link>
       </section>
 
-      <section className="section final-cta-wrap">
-        <div className="final-cta page-shell">
-          <div><div className="eyebrow light">Built for a faster market</div><h2>Don&apos;t refresh listings.<br/>Build your advantage.</h2></div>
-          <div className="final-cta-actions"><Link className="button button-white" href="/agent">Create smart agent</Link><Link className="button button-ghost-light" href="/list-property">List a property</Link></div>
-        </div>
-      </section>
-
-      <footer className="site-footer page-shell">
-        <div><strong>Finqit.ai</strong><p>Find, secure and manage homes with confidence.</p></div>
-        <div className="footer-links"><Link href="/explore">Marketplace</Link><Link href="/agent">Smart Agent</Link><Link href="/community">Communities</Link><Link href="/list-property">For agencies</Link></div>
-        <small>© 2026 Finqit.ai · Prototype experience</small>
+      <footer className="site-footer mkt-shell">
+        <div><strong>Finqit.ai</strong><p>Find, reserve and manage homes with confidence.</p></div>
+        <div className="footer-links"><Link href="/explore">Marketplace</Link><Link href="/agent">Buying Agent</Link><Link href="/list-property">List property</Link><Link href="/community">Communities</Link></div>
+        <small>© 2026 Finqit.ai · Product prototype</small>
       </footer>
     </>
   );
