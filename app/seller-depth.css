@@ -1,0 +1,72 @@
+/* Seller workspace and seller-published listing layer */
+.listing-success-card { text-align:center; max-width:760px; margin:34px auto 80px; }
+.listing-success-card h2 { font-size:34px; margin-top:8px; }
+.listing-success-actions { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:18px; }
+.seller-status-pending { color:#ad6a18 !important; }
+
+.seller-inventory-page { padding:46px 0 82px; }
+.seller-inventory-hero { display:flex; align-items:flex-end; justify-content:space-between; gap:28px; margin-bottom:30px; }
+.seller-inventory-hero h1 { margin:8px 0 9px; color:var(--mkt-ink); font-size:clamp(44px,5vw,64px); letter-spacing:-3px; line-height:1; }
+.seller-inventory-hero p { margin:0; max-width:650px; color:var(--mkt-muted); line-height:1.55; }
+.seller-inventory-summary { display:grid; grid-template-columns:repeat(4,1fr); border:1px solid #e4ebf2; border-radius:24px; overflow:hidden; margin-bottom:24px; background:white; }
+.seller-inventory-summary > div { padding:19px 21px; border-right:1px solid #e8eef4; }
+.seller-inventory-summary > div:last-child { border-right:0; }
+.seller-inventory-summary strong { display:block; color:var(--mkt-ink); font-size:24px; letter-spacing:-.7px; }
+.seller-inventory-summary span { color:var(--mkt-muted); font-size:10px; }
+.seller-inventory-list { display:grid; gap:12px; }
+.seller-listing-row { display:grid; grid-template-columns:76px minmax(0,1fr) auto; gap:17px; align-items:center; border:1px solid #e4ebf3; border-radius:23px; padding:14px; background:white; }
+.seller-listing-thumb { width:76px; height:76px; display:grid; place-items:center; border-radius:18px; background:linear-gradient(145deg,#eef8ff,#dcefff); color:#438fcf; }
+.seller-listing-main { min-width:0; }
+.seller-listing-title { display:flex; align-items:flex-start; justify-content:space-between; gap:18px; }
+.seller-listing-title small { color:#9aa6b5; font-size:9px; font-weight:800; }
+.seller-listing-title h2 { margin:2px 0 4px; color:var(--mkt-ink); font-size:17px; letter-spacing:-.35px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.seller-listing-title p { margin:0; color:var(--mkt-muted); font-size:10px; }
+.seller-listing-title > strong { color:var(--mkt-ink); font-size:16px; white-space:nowrap; }
+.seller-listing-meta { display:flex; gap:7px 12px; flex-wrap:wrap; margin-top:10px; color:#758397; font-size:9px; font-weight:750; }
+.seller-listing-meta > span { display:inline-flex; align-items:center; gap:4px; }
+.seller-status { border-radius:999px; padding:5px 7px; }
+.seller-status-pending { color:#9c641d; background:#fff6e8; }
+.seller-status-verified { color:#176dbf; background:#edf7ff; }
+.seller-status-live { color:#147459; background:#eafbf4; }
+.seller-listing-actions { display:grid; gap:7px; justify-items:stretch; min-width:150px; }
+.seller-listing-actions .button { justify-content:center; }
+.seller-listing-actions .text-button { font-size:10px; justify-content:center; }
+.seller-inventory-empty { display:grid; justify-items:center; gap:8px; text-align:center; padding:68px 20px; border:1px dashed #d8e4ee; border-radius:26px; color:#6fa7d6; background:#fbfdff; }
+.seller-inventory-empty h2 { margin:5px 0 0; color:var(--mkt-ink); }
+.seller-inventory-empty p { margin:0 0 9px; color:var(--mkt-muted); font-size:12px; }
+.seller-demo-note { display:flex; align-items:flex-start; gap:10px; margin-top:22px; padding:15px 17px; border:1px solid #dfe9f2; border-radius:18px; background:#f8fbfe; color:#4489c1; }
+.seller-demo-note p { margin:0; color:#68788d; font-size:10px; line-height:1.5; }
+.seller-demo-note strong { color:#385d80; }
+
+.seller-market-card .property-card-image-wrap:after { content:"Seller published"; position:absolute; left:12px; bottom:12px; z-index:2; background:rgba(16,35,63,.78); color:white; backdrop-filter:blur(12px); border-radius:999px; padding:6px 9px; font-size:8px; font-weight:850; text-transform:uppercase; letter-spacing:.06em; }
+
+.seller-live-detail { padding-bottom:70px; }
+.seller-live-loading,.seller-live-missing { min-height:58vh; display:grid; align-content:center; justify-items:center; gap:9px; text-align:center; color:#5a9bd1; }
+.seller-live-missing h1 { margin:6px 0 0; color:var(--mkt-ink); font-size:34px; letter-spacing:-1.4px; }
+.seller-live-missing p { margin:0 0 10px; max-width:530px; color:var(--mkt-muted); line-height:1.55; }
+.seller-live-facts { grid-template-columns:repeat(4,1fr); }
+
+@media (max-width: 900px) {
+  .seller-inventory-summary { grid-template-columns:1fr 1fr; }
+  .seller-inventory-summary > div:nth-child(2) { border-right:0; }
+  .seller-inventory-summary > div:nth-child(-n+2) { border-bottom:1px solid #e8eef4; }
+  .seller-listing-row { grid-template-columns:64px minmax(0,1fr); }
+  .seller-listing-thumb { width:64px; height:64px; }
+  .seller-listing-actions { grid-column:1 / -1; display:flex; justify-content:flex-end; min-width:0; }
+}
+
+@media (max-width: 680px) {
+  .seller-inventory-page { padding-top:28px; }
+  .seller-inventory-hero { align-items:flex-start; flex-direction:column; }
+  .seller-inventory-hero h1 { font-size:44px; }
+  .seller-inventory-hero .button { width:100%; justify-content:center; }
+  .seller-inventory-summary { border-radius:20px; }
+  .seller-inventory-summary > div { padding:15px; }
+  .seller-listing-row { grid-template-columns:52px minmax(0,1fr); padding:12px; }
+  .seller-listing-thumb { width:52px; height:52px; border-radius:14px; }
+  .seller-listing-title > strong { font-size:14px; }
+  .seller-listing-title h2 { font-size:15px; }
+  .seller-listing-actions { justify-content:stretch; flex-direction:column; }
+  .seller-listing-actions .button { width:100%; }
+  .seller-live-facts { grid-template-columns:1fr 1fr; }
+}
