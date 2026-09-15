@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import "./marketplace.css";
 import "./product-depth.css";
+import "./seller-depth.css";
 import { Header } from "@/components/Header";
 import { MobileNav } from "@/components/MobileNav";
 
