@@ -2,17 +2,34 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Property } from "@/data/properties";
 import { formatPrice } from "@/data/properties";
 import { AreaIcon, BedIcon, HeartIcon, MapPinIcon, SparklesIcon } from "@/components/icons";
+import { FINQIT_STATE_EVENT, getSavedHomes, toggleSavedHome } from "@/lib/demo-state";
 
 export function PropertyCard({ property }: { property: Property }) {
   const [saved, setSaved] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
 
+  useEffect(() => {
+    const sync = () => setSaved(getSavedHomes().includes(property.slug));
+    sync();
+    window.addEventListener(FINQIT_STATE_EVENT, sync);
+    window.addEventListener("storage", sync);
+    return () => {
+      window.removeEventListener(FINQIT_STATE_EVENT, sync);
+      window.removeEventListener("storage", sync);
+    };
+  }, [property.slug]);
+
   const move = (direction: number) => {
     setImageIndex((current) => (current + direction + property.images.length) % property.images.length);
+  };
+
+  const handleSave = () => {
+    const next = toggleSavedHome(property.slug);
+    setSaved(next.includes(property.slug));
   };
 
   return (
@@ -28,7 +45,7 @@ export function PropertyCard({ property }: { property: Property }) {
         <button type="button" className="property-gallery-arrow left" onClick={() => move(-1)} aria-label="Previous photo">‹</button>
         <button type="button" className="property-gallery-arrow right" onClick={() => move(1)} aria-label="Next photo">›</button>
         <div className="property-card-dots" aria-hidden="true">{property.images.map((_, index) => <span key={index} className={index === imageIndex ? "active" : ""}/>)}</div>
-        <button type="button" className={`save-button ${saved ? "saved" : ""}`} onClick={() => setSaved(!saved)} aria-label={saved ? "Remove from saved" : "Save property"}>
+        <button type="button" className={`save-button ${saved ? "saved" : ""}`} onClick={handleSave} aria-label={saved ? "Remove from saved" : "Save property"}>
           <HeartIcon size={20} fill={saved ? "currentColor" : "none"} />
         </button>
       </div>
