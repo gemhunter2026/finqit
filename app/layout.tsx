@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import "./marketplace.css";
 import { Header } from "@/components/Header";
 import { MobileNav } from "@/components/MobileNav";
 
@@ -34,7 +35,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
-  themeColor: "#f8fbff",
+  themeColor: "#ffffff",
   viewportFit: "cover"
 };
 
