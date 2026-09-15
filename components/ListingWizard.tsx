@@ -1,13 +1,16 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { BuildingIcon, CheckIcon, ShieldIcon, SparklesIcon } from "@/components/icons";
+import { type SellerListing, addSellerListing } from "@/lib/demo-state";
 
 const steps = ["Property", "Authority", "Reservation", "Review"] as const;
 
 export function ListingWizard() {
   const [step, setStep] = useState(0);
   const [published, setPublished] = useState(false);
+  const [createdListing, setCreatedListing] = useState<SellerListing | null>(null);
   const [instantReserve, setInstantReserve] = useState(true);
   const [form, setForm] = useState({
     address: "Carrer de Prat de la Riba 118",
@@ -26,14 +29,41 @@ export function ListingWizard() {
   const refundable = useMemo(() => Math.max(0, Number(form.reservation || 0) - Number(form.premium || 0)), [form.reservation, form.premium]);
   const money = (value: string | number) => new Intl.NumberFormat("es-ES", {style:"currency",currency:"EUR",maximumFractionDigits:0}).format(Number(value || 0));
 
-  if (published) {
-    return <div className="listing-card" style={{textAlign:"center",maxWidth:760,margin:"34px auto 80px"}}>
+  const submitListing = () => {
+    const listing = addSellerListing({
+      address: form.address.trim(),
+      city: form.city.trim(),
+      price: Number(form.price || 0),
+      bedrooms: Number(form.bedrooms || 0),
+      area: Number(form.area || 0),
+      sellerType: form.sellerType === "owner" ? "owner" : "agency",
+      agency: form.sellerType === "agency" ? form.agency.trim() : "Private owner",
+      instantReserve,
+      reservationFee: instantReserve ? Number(form.reservation || 0) : 0,
+      optionPremium: instantReserve ? Number(form.premium || 0) : 0,
+      windowHours: instantReserve ? Number(form.window || 72) : 0
+    });
+    setCreatedListing(listing);
+    setPublished(true);
+  };
+
+  if (published && createdListing) {
+    return <div className="listing-card listing-success-card">
       <div className="reserve-success-icon">✓</div>
-      <div className="mkt-section-label">Listing ready</div>
-      <h2 style={{fontSize:34,marginTop:8}}>Your property is ready for marketplace review.</h2>
-      <p>In production, Finqit would now verify the seller/agency mandate and required property information before showing the Instant Reserve badge.</p>
-      <div className="terms-preview" style={{textAlign:"left"}}><div><span>Property</span><strong>{form.address}, {form.city}</strong></div><div><span>Price</span><strong>{money(form.price)}</strong></div><div><span>Reservation mode</span><strong>{instantReserve ? "Instant Reserve" : "Viewing requests only"}</strong></div></div>
-      <button className="button button-primary" onClick={() => { setPublished(false); setStep(0); }}>Create another listing</button>
+      <div className="mkt-section-label">Submitted for verification</div>
+      <h2>Your property is now in your Finqit inventory.</h2>
+      <p>It is intentionally <strong>not live yet</strong>. Finqit first verifies the seller/agency authority and transaction information before the listing can receive the Instant Reserve badge.</p>
+      <div className="terms-preview" style={{textAlign:"left"}}>
+        <div><span>Listing ID</span><strong>{createdListing.id}</strong></div>
+        <div><span>Property</span><strong>{form.address}, {form.city}</strong></div>
+        <div><span>Price</span><strong>{money(form.price)}</strong></div>
+        <div><span>Reservation mode</span><strong>{instantReserve ? "Instant Reserve requested" : "Viewing requests only"}</strong></div>
+        <div><span>Status</span><strong className="seller-status-pending">Pending verification</strong></div>
+      </div>
+      <div className="listing-success-actions">
+        <Link className="button button-primary" href="/my-listings">View My Listings</Link>
+        <button className="button button-secondary" onClick={() => { setPublished(false); setCreatedListing(null); setStep(0); }}>Create another listing</button>
+      </div>
     </div>;
   }
 
@@ -100,7 +130,7 @@ export function ListingWizard() {
 
       <div className="listing-actions">
         <button className="button button-secondary" disabled={step === 0} onClick={() => setStep((current) => Math.max(0, current - 1))} style={step === 0 ? {visibility:"hidden"} : undefined}>Back</button>
-        {step < steps.length - 1 ? <button className="button button-primary" onClick={() => setStep((current) => Math.min(steps.length - 1, current + 1))}>Continue</button> : <button className="button button-primary" onClick={() => setPublished(true)}>Submit listing</button>}
+        {step < steps.length - 1 ? <button className="button button-primary" onClick={() => setStep((current) => Math.min(steps.length - 1, current + 1))}>Continue</button> : <button className="button button-primary" onClick={submitListing}>Submit listing</button>}
       </div>
     </section>
   </div>;
