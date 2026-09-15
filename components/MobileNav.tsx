@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BuildingIcon, HeartIcon, HomeIcon, SparklesIcon, UsersIcon } from "@/components/icons";
+import { BuildingIcon, HomeIcon, SparklesIcon, UsersIcon } from "@/components/icons";
 
 const items = [
-  { href: "/", label: "Home", icon: HomeIcon },
-  { href: "/explore", label: "Search", icon: BuildingIcon },
+  { href: "/", label: "Home", icon: HomeIcon, featured: false },
+  { href: "/explore", label: "Search", icon: BuildingIcon, featured: false },
   { href: "/agent", label: "Agent", icon: SparklesIcon, featured: true },
-  { href: "/list-property", label: "List", icon: HomeIcon },
-  { href: "/community", label: "Community", icon: UsersIcon }
+  { href: "/list-property", label: "List", icon: HomeIcon, featured: false },
+  { href: "/community", label: "Community", icon: UsersIcon, featured: false }
 ] as const;
 
 export function MobileNav() {
