@@ -3,7 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { properties, formatPrice } from "@/data/properties";
 import { ReservationFlow } from "@/components/ReservationFlow";
-import { AreaIcon, BathIcon, BedIcon, CheckIcon, HeartIcon, MapPinIcon, ShieldIcon, SparklesIcon } from "@/components/icons";
+import { SaveHomeButton } from "@/components/SaveHomeButton";
+import { AreaIcon, BathIcon, BedIcon, CheckIcon, MapPinIcon, ShieldIcon, SparklesIcon } from "@/components/icons";
 
 export async function generateStaticParams() { return properties.map((p) => ({ slug: p.slug })); }
 
@@ -26,7 +27,7 @@ export default async function PropertyPage({ params }: { params: Promise<{slug: 
         <div className="gallery-main"><Image src={property.images[0]} alt={property.title} fill priority sizes="(max-width:900px) 100vw, 66vw"/></div>
         <div className="gallery-side"><Image src={property.images[1]} alt="Property interior" fill sizes="33vw"/></div>
         <div className="gallery-side"><Image src={property.images[2]} alt="Property detail" fill sizes="33vw"/></div>
-        <button className="gallery-save"><HeartIcon/> Save</button>
+        <SaveHomeButton slug={property.slug}/>
       </section>
 
       <div className="property-detail-layout">
@@ -71,7 +72,7 @@ export default async function PropertyPage({ params }: { params: Promise<{slug: 
             <div className="reservation-top"><span>Exclusive reservation</span><strong>{property.instantReserve ? "Available now" : "Request only"}</strong></div>
             <h2>{property.instantReserve ? "Reserve this home" : "Request a viewing"}</h2>
             <p>{property.instantReserve ? "Secure your decision window before another eligible buyer takes the next slot." : "This seller has not enabled the standard instant reservation agreement yet."}</p>
-            {property.instantReserve ? <ReservationFlow price={property.price} reservationFee={property.reservationFee} optionPremium={property.optionPremium} visitWindow={property.visitWindow} propertyTitle={property.title}/> : <><button className="button button-primary full-width">Request viewing</button><small className="reservation-legal">No reservation payment is requested for this listing.</small></>}
+            {property.instantReserve ? <ReservationFlow propertySlug={property.slug} price={property.price} reservationFee={property.reservationFee} optionPremium={property.optionPremium} visitWindow={property.visitWindow} propertyTitle={property.title}/> : <><button className="button button-primary full-width">Request viewing</button><small className="reservation-legal">No reservation payment is requested for this listing.</small></>}
           </div>
           <div className="priority-card"><ShieldIcon/><div><strong>Fair-access rule</strong><p>A buyer can hold only one active Finqit reservation. Once a reservation is obtained, the buyer leaves the eligible queue until that reservation ends.</p></div></div>
         </aside>
