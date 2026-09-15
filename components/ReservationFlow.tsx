@@ -1,8 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 import { CheckIcon, ClockIcon, ShieldIcon } from "@/components/icons";
 import { formatPrice } from "@/data/properties";
+import { FINQIT_STATE_EVENT, type ReservationRecord, getActiveReservation, setActiveReservation } from "@/lib/demo-state";
 
 type ReservationFlowProps = {
   price: number;
@@ -10,28 +12,81 @@ type ReservationFlowProps = {
   optionPremium: number;
   visitWindow: string;
   propertyTitle: string;
+  propertySlug: string;
 };
 
-export function ReservationFlow({ price, reservationFee, optionPremium, visitWindow, propertyTitle }: ReservationFlowProps) {
+export function ReservationFlow({ price, reservationFee, optionPremium, visitWindow, propertyTitle, propertySlug }: ReservationFlowProps) {
   const [step, setStep] = useState(1);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [acceptedInfo, setAcceptedInfo] = useState(false);
   const [method, setMethod] = useState<"card" | "wallet" | "bank">("card");
+  const [activeReservation, setActiveReservationState] = useState<ReservationRecord | null>(null);
 
   const refundable = reservationFee - optionPremium;
   const reference = useMemo(() => `FQ-${Math.floor(100000 + Math.random() * 899999)}`, []);
 
-  if (step === 4) {
+  useEffect(() => {
+    const sync = () => setActiveReservationState(getActiveReservation());
+    sync();
+    window.addEventListener(FINQIT_STATE_EVENT, sync);
+    window.addEventListener("storage", sync);
+    return () => {
+      window.removeEventListener(FINQIT_STATE_EVENT, sync);
+      window.removeEventListener("storage", sync);
+    };
+  }, []);
+
+  const completeReservation = () => {
+    const existing = getActiveReservation();
+    if (existing && existing.propertySlug !== propertySlug) {
+      setActiveReservationState(existing);
+      return;
+    }
+
+    const record: ReservationRecord = {
+      reference,
+      propertySlug,
+      propertyTitle,
+      reservationFee,
+      optionPremium,
+      refundableAmount: refundable,
+      visitWindow,
+      startedAt: new Date().toISOString(),
+      status: "active"
+    };
+    setActiveReservation(record);
+    setActiveReservationState(record);
+    setStep(4);
+  };
+
+  if (activeReservation && activeReservation.propertySlug !== propertySlug) {
+    return <div className="reserve-blocked">
+      <div className="reserve-blocked-icon"><ShieldIcon size={23}/></div>
+      <h3>One reservation at a time</h3>
+      <p>You already hold an active reservation for <strong>{activeReservation.propertyTitle}</strong>. Finqit pauses all other reservation and Auto-Reserve actions until that window ends or you release it.</p>
+      <div className="reserve-summary">
+        <div className="reserve-summary-row"><span>Active reference</span><strong>{activeReservation.reference}</strong></div>
+        <div className="reserve-summary-row"><span>Current window</span><strong>{activeReservation.visitWindow}</strong></div>
+      </div>
+      <Link className="button button-primary full-width" href="/my">Manage active reservation</Link>
+      <small className="reservation-legal">This prototype rule models the fair-access system discussed for Finqit.</small>
+    </div>;
+  }
+
+  if ((step === 4 || activeReservation?.propertySlug === propertySlug) && activeReservation) {
     return <div className="reserve-success">
       <div className="reserve-success-icon">✓</div>
-      <h3>Reservation simulation complete</h3>
-      <p><strong>{propertyTitle}</strong> would now be exclusively locked for your {visitWindow} decision window.</p>
+      <h3>Exclusive window active</h3>
+      <p><strong>{activeReservation.propertyTitle}</strong> is now held as your active Finqit reservation in this prototype.</p>
       <div className="reserve-summary" style={{marginTop:16,textAlign:"left"}}>
-        <div className="reserve-summary-row"><span>Reference</span><strong>{reference}</strong></div>
-        <div className="reserve-summary-row"><span>Reservation amount</span><strong>{formatPrice(reservationFee)}</strong></div>
+        <div className="reserve-summary-row"><span>Reference</span><strong>{activeReservation.reference}</strong></div>
+        <div className="reserve-summary-row"><span>Reservation amount</span><strong>{formatPrice(activeReservation.reservationFee)}</strong></div>
+        <div className="reserve-summary-row"><span>Refundable portion</span><strong>{formatPrice(activeReservation.refundableAmount)}</strong></div>
+        <div className="reserve-summary-row"><span>Decision window</span><strong>{activeReservation.visitWindow}</strong></div>
         <div className="reserve-summary-row"><span>Status</span><strong style={{color:"#16845f"}}>Exclusive window active</strong></div>
       </div>
-      <small className="reservation-legal">Prototype: no payment was charged and no binding right has been created. Production must use the final lawyer-approved contract and a regulated payment provider.</small>
+      <Link className="button button-primary full-width" href="/my">Open My Finqit</Link>
+      <small className="reservation-legal">Prototype only: no payment was charged and no binding right was created. Production requires the final approved agreement and regulated payment flow.</small>
     </div>;
   }
 
@@ -58,10 +113,10 @@ export function ReservationFlow({ price, reservationFee, optionPremium, visitWin
 
     {step === 2 && <>
       <h3 className="reserve-step-title">Know exactly what you accept</h3>
-      <p className="reserve-step-copy">Production must provide the property information and contract in a durable format before the buyer pays. These confirmations model that UX.</p>
+      <p className="reserve-step-copy">The production experience will expose the relevant property information and agreement before payment. These confirmations model that UX.</p>
       <label className="reserve-check">
         <input type="checkbox" checked={acceptedInfo} onChange={(event) => setAcceptedInfo(event.target.checked)}/>
-        <span><strong>I received the transaction information</strong><small>Seller/intermediary identity, total price, essential property information, charges and the reservation conditions are available to download before payment.</small></span>
+        <span><strong>I received the transaction information</strong><small>Seller/intermediary identity, total price, essential property information, charges and the reservation conditions are available before payment.</small></span>
       </label>
       <label className="reserve-check">
         <input type="checkbox" checked={acceptedTerms} onChange={(event) => setAcceptedTerms(event.target.checked)}/>
@@ -73,7 +128,7 @@ export function ReservationFlow({ price, reservationFee, optionPremium, visitWin
 
     {step === 3 && <>
       <h3 className="reserve-step-title">Choose payment method</h3>
-      <p className="reserve-step-copy">The real product should send funds through a regulated payment provider; Finqit should not casually hold reservation money in its operating account.</p>
+      <p className="reserve-step-copy">The production product should route funds through a regulated payment provider rather than Finqit casually holding reservation money.</p>
       <div className="reserve-payment">
         <button className={method === "card" ? "active" : ""} onClick={() => setMethod("card")}><span>💳 Card</span><span>•••• 4242</span></button>
         <button className={method === "wallet" ? "active" : ""} onClick={() => setMethod("wallet")}><span> Pay / Google Pay</span><span>Fast</span></button>
@@ -83,7 +138,7 @@ export function ReservationFlow({ price, reservationFee, optionPremium, visitWin
         <div className="reserve-summary-row"><span>Due now</span><strong>{formatPrice(reservationFee)}</strong></div>
         <div className="reserve-summary-row"><span>Payment purpose</span><strong>Exclusive reservation</strong></div>
       </div>
-      <button className="button button-primary full-width large-button" onClick={() => setStep(4)}>Simulate secure payment · {formatPrice(reservationFee)}</button>
+      <button className="button button-primary full-width large-button" onClick={completeReservation}>Simulate secure payment · {formatPrice(reservationFee)}</button>
       <button className="text-button" onClick={() => setStep(2)}>← Back to terms</button>
       <small className="reservation-legal">Demo only. This button intentionally does not collect card data or charge money.</small>
     </>}
