@@ -21,10 +21,28 @@ export type ReservationRecord = {
   status: "active" | "released" | "proceeded";
 };
 
+export type SellerListing = {
+  id: string;
+  address: string;
+  city: string;
+  price: number;
+  bedrooms: number;
+  area: number;
+  sellerType: "agency" | "owner";
+  agency: string;
+  instantReserve: boolean;
+  reservationFee: number;
+  optionPremium: number;
+  windowHours: number;
+  status: "pending" | "verified" | "live";
+  createdAt: string;
+};
+
 const KEYS = {
   saved: "finqit:saved-homes",
   agent: "finqit:agent-config",
-  reservation: "finqit:active-reservation"
+  reservation: "finqit:active-reservation",
+  listings: "finqit:seller-listings"
 } as const;
 
 export const FINQIT_STATE_EVENT = "finqit:state";
@@ -96,4 +114,25 @@ export function clearActiveReservation(status: ReservationRecord["status"] = "re
   const current = readJson<ReservationRecord | null>(KEYS.reservation, null);
   if (!current) return;
   writeJson(KEYS.reservation, { ...current, status });
+}
+
+export function getSellerListings() {
+  return readJson<SellerListing[]>(KEYS.listings, []);
+}
+
+export function addSellerListing(listing: Omit<SellerListing, "id" | "createdAt" | "status">) {
+  const next: SellerListing = {
+    ...listing,
+    id: `FQL-${Date.now().toString(36).toUpperCase()}`,
+    createdAt: new Date().toISOString(),
+    status: "pending"
+  };
+  writeJson(KEYS.listings, [next, ...getSellerListings()]);
+  return next;
+}
+
+export function updateSellerListingStatus(id: string, status: SellerListing["status"]) {
+  const next = getSellerListings().map((listing) => listing.id === id ? { ...listing, status } : listing);
+  writeJson(KEYS.listings, next);
+  return next;
 }
