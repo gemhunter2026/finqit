@@ -2,7 +2,7 @@ name: Finqit build
 
 on:
   push:
-    branches: [main, marketplace-instant-reserve-v2]
+    branches: [main]
   pull_request:
     branches: [main]
 
