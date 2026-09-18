@@ -10,21 +10,20 @@ Finqit should feel fast enough for a competitive property market and trustworthy
 
 ## Identity
 - Product name: **Finqit.ai**
-- Short name: **Finqit**
-- Primary mark: rounded blue home tile with a doorway and AI spark
-- Wordmark: dark navy `Finqit` with blue `.ai`
+- Short name and customer-facing wordmark: **Finqit**
+- Primary mark: **Geo Architectural** — three precise building facets forming a compact skyline with an upward architectural rhythm.
+- Preferred lockup: blue architectural mark + deep-navy `Finqit` wordmark on white.
+- Reversed usage: blue architectural mark + white `Finqit` wordmark on deep navy.
+- App / favicon treatment: the architectural mark centred on a clean white rounded-square tile.
+- Keep the mark geometric and flat. Avoid shadows, glows, 3D effects, house icons, sparkles and generic AI motifs.
 - Avoid using the former `Thinkit.ai` name in any product or marketing asset.
 
 ## Core palette
-- Sky 50: `#F2F9FF`
-- Sky 100: `#E3F3FF`
-- Sky 300: `#98D5FF`
-- Sky 400: `#62BAFF`
-- Sky 500: `#3D9CFF`
-- Blue 600: `#247DEB`
-- Deep blue: `#2F7CF6`
-- Navy: `#0F1F3D`
-- Surface: `#FFFFFF`
+- Primary blue: `#1E5BFF`
+- Core blue: `#1558FF`
+- Sky blue: `#43B8FF`
+- Deep navy: `#08152F`
+- White: `#FFFFFF`
 - Background: `#F8FBFF`
 - Muted text: `#6D7B91`
 
