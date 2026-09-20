@@ -5,7 +5,6 @@
 
 begin;
 
--- Minimal local auth identities used only to exercise domain foreign keys.
 insert into auth.users (id, aud, role, email)
 values
   ('00000000-0000-4000-8000-000000000101', 'authenticated', 'authenticated', 'data004-owner@example.invalid'),
@@ -23,7 +22,6 @@ values ('30000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-0000000
 insert into public.community_members (community_id, user_id, role, status, unit_id)
 values ('10000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000102', 'resident', 'active', '30000000-0000-4000-8000-000000000001');
 
--- CRUD/update lifecycle check.
 update public.community_members
 set status = 'suspended'
 where community_id = '10000000-0000-4000-8000-000000000001'
@@ -42,26 +40,23 @@ begin
   end if;
 end $$;
 
--- Cross-tenant building/unit references must fail.
 insert into public.communities (id, name, created_by)
 values ('10000000-0000-4000-8000-000000000002', 'Other Community', '00000000-0000-4000-8000-000000000101');
 
-savepoint before_cross_tenant_unit;
-\set ON_ERROR_STOP off
-insert into public.community_units (id, community_id, building_id, label)
-values ('30000000-0000-4000-8000-000000000099', '10000000-0000-4000-8000-000000000002', '20000000-0000-4000-8000-000000000001', 'BAD');
-\set cross_tenant_sqlstate :SQLSTATE
-\set ON_ERROR_STOP on
-rollback to savepoint before_cross_tenant_unit;
-
+-- The composite FK must reject a building owned by another tenant. Catch exactly
+-- foreign_key_violation; any other failure remains visible to the test runner.
 do $$
 begin
-  if :'cross_tenant_sqlstate' = '00000' then
+  begin
+    insert into public.community_units (id, community_id, building_id, label)
+    values ('30000000-0000-4000-8000-000000000099', '10000000-0000-4000-8000-000000000002', '20000000-0000-4000-8000-000000000001', 'BAD');
     raise exception 'DATA-004 tenant FK check failed: cross-community building reference was accepted';
-  end if;
+  exception
+    when foreign_key_violation then null;
+  end;
 end $$;
 
--- Delete path: deleting a unit clears membership.unit_id rather than deleting membership.
+-- Deleting a unit must clear the optional member link, not delete the membership.
 delete from public.community_units
 where id = '30000000-0000-4000-8000-000000000001';
 
