@@ -1,4 +1,4 @@
-import { communityPrivacyInventory, type RetentionPolicy } from "./data-inventory";
+import { communityPrivacyInventory, type PrivacyInventoryItem, type RetentionPolicy } from "./data-inventory";
 
 export type RetentionPolicyKey = RetentionPolicy;
 export type RetentionDurationConfig = Partial<Record<RetentionPolicyKey, number>>;
@@ -26,8 +26,8 @@ export interface RetentionCleanupReport {
   readonly decisions: readonly RetentionDecision[];
 }
 
-const inventoryByResource = new Map(
-  communityPrivacyInventory.map((item) => [item.resource, item] as const),
+const inventoryByResource = new Map<string, PrivacyInventoryItem>(
+  communityPrivacyInventory.map((item) => [item.resource, item]),
 );
 
 function positiveInteger(value: number | undefined): number | null {
