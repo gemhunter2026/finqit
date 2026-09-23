@@ -1,13 +1,12 @@
-import {
+import { AIProviderError, assertCapability } from "./provider.ts";
+import type {
   AIEmbeddingRequest,
   AIEmbeddingResponse,
   AIGenerationRequest,
   AIProvider,
-  AIProviderError,
   AIStructuredRequest,
   AIStructuredResponse,
   AITextResponse,
-  assertCapability,
 } from "./provider.ts";
 
 export type MockAIScenario =
