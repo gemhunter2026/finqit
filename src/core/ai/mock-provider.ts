@@ -50,8 +50,11 @@ function metadata(scenario: MockAIScenario) {
 export class MockAIProvider implements AIProvider {
   readonly id = "mock";
   readonly capabilities = new Set(["text", "structured", "embedding"] as const);
+  private readonly fixtures: Readonly<Record<Exclude<MockAIScenario, "failure" | "timeout">, MockAIFixture>>;
 
-  constructor(private readonly fixtures = DEFAULT_FIXTURES) {}
+  constructor(fixtures = DEFAULT_FIXTURES) {
+    this.fixtures = fixtures;
+  }
 
   private scenario(request: AIGenerationRequest): MockAIScenario {
     return scenarioFromMessages(request);
