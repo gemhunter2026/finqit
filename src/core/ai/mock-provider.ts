@@ -8,7 +8,7 @@ import {
   AIStructuredResponse,
   AITextResponse,
   assertCapability,
-} from "./provider";
+} from "./provider.ts";
 
 export type MockAIScenario =
   | "classification"
