@@ -41,6 +41,13 @@ jobs:
         run: |
           docker exec supabase_db_finqit-local psql -U postgres -d postgres -v ON_ERROR_STOP=1 -c "select count(*) as communities from public.communities;"
 
+      - name: Run SQL smoke suites
+        run: |
+          for sql in supabase/tests/*.sql; do
+            [ -e "$sql" ] || continue
+            docker exec -i supabase_db_finqit-local psql -U postgres -d postgres -v ON_ERROR_STOP=1 < "$sql"
+          done
+
       - name: Stop local Supabase
         if: always()
         run: supabase stop --no-backup
