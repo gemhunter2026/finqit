@@ -1,0 +1,46 @@
+name: Supabase local validation
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "supabase/**"
+      - ".github/workflows/supabase-local.yml"
+  push:
+    branches: [main]
+    paths:
+      - "supabase/**"
+      - ".github/workflows/supabase-local.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate-local-supabase:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: 2.117.0
+
+      - name: Start local Supabase
+        run: supabase start
+
+      - name: Reset database from migrations and seed
+        run: supabase db reset
+
+      - name: Lint database
+        run: supabase db lint --level warning
+
+      - name: Smoke query seeded community
+        run: |
+          docker exec supabase_db_finqit-local psql -U postgres -d postgres -v ON_ERROR_STOP=1 -c "select count(*) as communities from public.communities;"
+
+      - name: Stop local Supabase
+        if: always()
+        run: supabase stop --no-backup
