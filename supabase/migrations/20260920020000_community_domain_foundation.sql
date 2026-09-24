@@ -11,6 +11,21 @@ alter table public.community_members
   add column status public.community_membership_status not null default 'active',
   add column updated_at timestamptz not null default now();
 
+-- DATA-002 correctly scoped unit references by (community_id, unit_id), but a plain
+-- composite ON DELETE SET NULL attempts to null both columns. community_id is NOT NULL,
+-- so deleting a unit would fail instead of preserving the membership/invitation and
+-- clearing only its optional unit reference. Recreate both constraints with a column
+-- list so tenant identity is immutable while unit_id alone is cleared.
+alter table public.community_members drop constraint community_members_unit_tenant_fk;
+alter table public.community_members add constraint community_members_unit_tenant_fk
+  foreign key (community_id, unit_id) references public.community_units(community_id, id)
+  on delete set null (unit_id);
+
+alter table public.community_invitations drop constraint community_invitations_community_id_unit_id_fkey;
+alter table public.community_invitations add constraint community_invitations_unit_tenant_fk
+  foreign key (community_id, unit_id) references public.community_units(community_id, id)
+  on delete set null (unit_id);
+
 create or replace function public.set_updated_at()
 returns trigger
 language plpgsql
